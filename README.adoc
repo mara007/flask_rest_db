@@ -1,2 +1,2 @@
-# flask_rest_db.py
+= Unsecure REST database-like
 simple not-even-db using `Flask` and `SQLite3`
