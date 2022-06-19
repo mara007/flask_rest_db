@@ -2,6 +2,9 @@
 simple not-even-db using `Flask` and `SQLite3`
 
 
-= API
+== API
 
-* url: `/db/
+=== URL: `/db/<namespace:string>/<key:string>`
+* GET: retrieves key
+* POST: stores message body
+* DELETE: deletes key
