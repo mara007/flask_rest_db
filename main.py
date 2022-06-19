@@ -7,6 +7,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return '<i>Nothing to see here</>'
+    return '<i>Nothing to see here</i>'
 
 
+if __name__ == "__main__":
+    app.run()

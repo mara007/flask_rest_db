@@ -1,2 +1,7 @@
 = Unsecure REST database-like
 simple not-even-db using `Flask` and `SQLite3`
+
+
+= API
+
+* url: `/db/
