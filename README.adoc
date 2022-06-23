@@ -1,10 +1,12 @@
 = Unsecure REST database-like
 simple not-even-db using `Flask` and `SQLite3`
 
+set `PYTHONPATH=`pwd``
 
 == API
 
 === URL: `/db/<namespace:string>/<key:string>`
 * GET: retrieves key
-* POST: stores message body
+* POST | PUT: stores message body
+* POST | PUT: stores message body, key must exist
 * DELETE: deletes key

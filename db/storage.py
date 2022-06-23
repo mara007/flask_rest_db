@@ -18,6 +18,12 @@ class BaseStorage:
     def delete_ns(self, ns: str = 'default') -> bool:
         raise AttributeError('class not for dirrect use')
 
+    def check(self, key: str, ns: str):
+        raise AttributeError('class not for dirrect use')
+
+    def dump(self, do_log = False) -> str:
+        raise AttributeError('class not for dirrect use')
+
 
 class StorageFactory:
     storage_classes = {}

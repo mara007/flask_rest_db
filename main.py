@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-from unicodedata import name
 from flask import Flask, request, Response
-from db_manager import DbManager
 import logging
 
-app = Flask(__name__)
-db_mananager = DbManager()
-logger = logging.getLogger(__name__)
+import http_manager
+import db_manager
 
+app = Flask(__name__)
+http_man = http_manager.HttpManager()
+
+logger = logging.getLogger(__name__)
 
 @app.route('/')
 def main_page():
@@ -17,27 +18,28 @@ def main_page():
     return html
 
 
-@app.route('/db/<namespace:string>/<key:string>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/db/<namespace>/<key>', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def rest_api(namespace, key):
     logger.info(f'REST API invoked - method: {request.method}, path: /db/{namespace=}/{key=}')
 
     if request.method == 'GET':
-        found_data = db_mananager.get(namespace=namespace, key=key)
-        if found_data:
-            return Response(response=found_data, status=200)
+        return http_man.do_get(k=key, ns=namespace)
 
-        return Response(status=404)
+    elif request.method in ['POST', 'PUT']:
+        return http_man.do_put_post(k=key, d=request.get_data(), ns=namespace)
 
-    elif request.method == 'POST':
-        if db_mananager.insert(namespace=namespace, key=key, value=request.get_data())
-        pass
+    elif request.method == 'PATCH':
+        return http_man.do_patch(k=key, d=request.get_data(), ns=namespace)
+
     elif request.method == 'DELETE':
-        pass
-    else:
-        pass
+        return http_man.do_delete(k=key, ns=namespace)
 
-    return '<i>Nothing to see here</i>'
+    return http_man.do_bad_request()
 
 
 if __name__ == "__main__":
+    db_man = db_manager.DbManager()
+    db_man.init('storage_memory', 'default')
+
+    http_man.init(db_man)
     app.run()

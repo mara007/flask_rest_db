@@ -1,4 +1,5 @@
 import logging
+import json
 
 from db.storage import BaseStorage, StorageFactory
 
@@ -63,6 +64,19 @@ class MemoryStorage(BaseStorage):
         logger.info(f'deleting {ns=}')
         del self.data[ns]
         return True
+
+    def check(self, key: str, ns: str):
+        if ns in self.data:
+            return key in self.data[ns]
+        return False
+
+    def dump(self, do_log = False) -> str:
+        logger.debug('dump')
+        dumped = json.dumps(self.data, indent=4)
+        if do_log:
+            logger.info(f'storage type="storage_memory", content:\n{dumped}\n')
+
+        return dumped
 
 
 StorageFactory.register_storage_class('storage_memory', MemoryStorage)
