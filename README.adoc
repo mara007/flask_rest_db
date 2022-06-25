@@ -1,7 +1,32 @@
 = Unsecure REST database-like
+
 simple not-even-db using `Flask` and `SQLite3`
 
-set `PYTHONPATH=`pwd``
+== requirements
+
+these python packages are required:
+****
+include::requirements.txt[]
+****
+
+Install them either from your distribution-specific packages, or from link:requirements.txt[] using `pip3`:
+
+`pip3 install -r requirements.txt``
+
+
+== run
+
+`./main.py`
+check server is running at http://127.0.0.1:5000/
+
+== test
+
+`pytest` testcases are provided in directory link:tests[]. To execute those, run `./runtest.sh`, or invoke pytest manually:
+[source,bash]
+----
+export PYTHONPATH=`pwd`
+pytest
+----
 
 == API
 
