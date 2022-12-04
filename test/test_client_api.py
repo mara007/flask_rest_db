@@ -1,32 +1,44 @@
 import pytest
 from flask import request as flask_request
 import threading
-import logging
+from multiprocessing import Process
 
+import logging
+import time
 import api
 import my_app
 
 logger = logging.getLogger(__name__)
 
 
-@pytest.fixture
-def app():
+@pytest.fixture(scope='class')
+def flask_app():
     logger.info('--> starting rest_db app')
 
-    app = my_app.create_app({'namespace': 'default', 'storage': 'storage_memory'})
-    t = threading.Thread(target=app.run(debug=True, use_reloader=False))
-    t.run()
+    def runner():
+        logger.info('..inside sub process')
+        server = my_app.create_app({'namespace': 'default', 'storage': 'storage_memory'})
+        server.run(debug=True, use_reloader=False)
+
+    flask_server = Process(target=runner)
+    flask_server.start()
+    time.sleep(0.5)
     yield
     logger.info('<-- stopping rest_db app')
-    flask_shutdown_hook = flask_request.environ.get('werkzeug.server.shutdown')
-    if flask_shutdown_hook is None:
-        raise AttributeError('cant get shutdown hook')
-
-    flask_shutdown_hook()
-    t.join()
-
+    flask_server.terminate()
     logger.info('<-- stopped rest_db app')
 
+@pytest.fixture(scope='class')
+def client_api():
+    logger.info('--> setup client API')
+    yield api.Api(db_uri='localhost:5000', namespace='default')
+    logger.info('<-- un setup client API')
 
-def test_client_api(app):
-    logger.info('testing')
+################################################################################
+
+@pytest.mark.usefixtures('flask_app', 'client_api')
+class TestClientApi:
+    def test_insert_get_keys(self, client_api: api.Api):
+        assert client_api.insert(key='username', value='john') == True
+        assert client_api.get(key='username') == 'john'
+        assert client_api.get_keys() == ['username']
