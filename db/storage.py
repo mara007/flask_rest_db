@@ -21,6 +21,9 @@ class BaseStorage:
     def check(self, key: str, ns: str):
         raise AttributeError('class not for dirrect use')
 
+    def keys(self, ns: str = 'default') -> str:
+        raise AttributeError('class not for dirrect use')
+
     def dump(self, do_log = False) -> str:
         raise AttributeError('class not for dirrect use')
 

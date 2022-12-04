@@ -36,6 +36,10 @@ class DbManager:
         ns = namespace if namespace else self.namespace
         return self.db_engine.check(key=key, ns=ns)
 
+    def keys(self, namespace = None):
+        ns = namespace if namespace else self.namespace
+        return self.db_engine.keys(ns=ns)
+
     def dump(self, do_log: bool = False):
         return self.db_engine.dump(do_log=do_log)
 

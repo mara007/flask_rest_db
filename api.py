@@ -1,6 +1,8 @@
-from unicodedata import name
 import requests
+import urllib.parse
 from requests.exceptions import HTTPError
+import json
+
 
 import logging
 
@@ -16,15 +18,20 @@ class Api:
         self.namespace = namespace
 
 
+    @staticmethod
+    def encode(value: str) -> str:
+        return urllib.parse.quote(value)
+
+
     def insert(self, key: str, value: str, namespace = None, overwrite: bool = False) -> bool:
         ns = namespace if namespace else self.namespace
         try:
-            response = requests.put(f'http://{self.db_uri}/db/{ns}/{key}', data=value)
+            response = requests.put(f'http://{self.db_uri}/db/{ns}/{self.encode(key)}', data=value)
         except HTTPError as ex:
             logger.error(f'error inserting {key=}: {ex}')
             return False
         except:
-            logger.error(f'error inserting {key=}: {ex}')
+            logger.error(f'error inserting {key=}')
             return False
 
         return response.status_code == 202
@@ -33,7 +40,7 @@ class Api:
     def get(self, key: str, namespace = None) -> str or None:
         ns = namespace if namespace else self.namespace
         try:
-            response = requests.get(f'http://{self.db_uri}/db/{ns}/{key}')
+            response = requests.get(f'http://{self.db_uri}/db/{ns}/{self.encode(key)}')
         except HTTPError as ex:
             logger.error(f'error getting {key=}: {ex}')
             return None
@@ -46,11 +53,27 @@ class Api:
 
         return response.content.decode('utf-8')
 
+    def get_keys(self, namespace = None) -> list:
+        ns = namespace if namespace else self.namespace
+        try:
+            response = requests.get(f'http://{self.db_uri}/db/{ns}')
+        except HTTPError as ex:
+            logger.error(f'error getting keys for {ns=}: {ex}')
+            return None
+        except:
+            logger.error(f'error getting keys for {ns=}')
+            return None
+
+        if response.status_code != 200:
+            return None
+
+        return json.loads(response.content.decode('utf-8'))
+
 
     def delete(self, key: str, namespace = None) -> bool:
         ns = namespace if namespace else self.namespace
         try:
-            response = requests.delete(f'http://{self.db_uri}/db/{ns}/{key}')
+            response = requests.delete(f'http://{self.db_uri}/db/{ns}/{self.encode(key)}')
         except HTTPError as ex:
             logger.error(f'error deleting: {ex}')
             return False

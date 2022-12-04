@@ -5,7 +5,8 @@ import my_app
 if __name__ == "__main__":
     config = {
         'storage': 'storage_memory',
-        'namespace': 'default'
+        'namespace': 'default',
+        'port': 4000
     }
     app = my_app.create_app(config_params=config)
-    app.run()
+    app.run(port=config['port'])

@@ -19,7 +19,11 @@ class HttpManager:
     def do_get(self, k: str, ns: str):
         logger.debug(f'do_get: {k=} {ns=}')
 
-        found_data = self.db_manager.get(key=k, namespace=ns)
+        if k:
+            found_data = self.db_manager.get(key=k, namespace=ns)
+        else:
+            found_data = self.db_manager.keys(namespace=ns)
+
         if found_data:
             return Response(status=200, response=found_data)
 

@@ -70,6 +70,13 @@ class MemoryStorage(BaseStorage):
             return key in self.data[ns]
         return False
 
+    def keys(self, ns: str = 'default') -> str:
+        logger.debug(f'keys: {ns=}')
+        if ns in self.data:
+            return json.dumps(list(self.data[ns].keys()))
+
+        return json.dumps([])
+
     def dump(self, do_log = False) -> str:
         logger.debug('dump')
         dumped = json.dumps(self.data, indent=4)

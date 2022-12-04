@@ -41,4 +41,11 @@ def create_app(config_params) -> Flask:
 
         return http_man.do_bad_request()
 
+
+    @app.route('/db/<namespace>', methods=['GET'])
+    def rest_api_keys(namespace):
+        logger.info(f'REST API invoked (keys) - method: {request.method}, path: /db/{namespace=}')
+        return http_man.do_get(k=None, ns=namespace)
+
+
     return app
