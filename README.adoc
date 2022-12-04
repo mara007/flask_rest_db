@@ -1,6 +1,6 @@
 = Unsecure REST database-like
 
-simple not-even-db using `Flask` and `SQLite3`
+simple not-even-db using `Flask` and (todo) `SQLite3`
 
 == requirements
 
